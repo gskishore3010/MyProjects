@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html >
+    <head>
+        <title>Evolent Health</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <style>
+            .form-group.required .control-label:after {
+                content:"*";
+                color:red;
+            }
+            .error-msg {color:red;}
+        </style>
+    </head>
+    <body>
+        <div class="container" style="padding-top:20px;">
+            <div ng-app="userApp" data-ng-controller="userController" class="container">
+                <h2 class="text-center">Evolent Health</h2>
+                <hr>
+                
+                <div class="modal fade" id="userModel" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                <h4 class="modal-title" id="myModalLabel" ng-hide="editMode">Add User</h4>
+                                <h4 class="modal-title" id="myModalLabel" ng-show="editMode">Edit User</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal" role="form" name="adduserform">
+                                    <div class="form-group required">
+                                        <label for="title" class="col-sm-4 control-label">First Name</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" name="fName" data-ng-model="user.fName" class="form-control" id="fName" placeholder="Your First Name" required />
+                                            <span class="error-msg" ng-show="adduserform.fName.$dirty && adduserform.fName.$invalid">
+                                                <span ng-show="adduserform.fName.$error.required">First Name required.</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group required">
+                                        <label for="title" class="col-sm-4 control-label">Last Name</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" data-ng-model="user.lName" class="form-control" id="lName" placeholder="Your Last Name" required/>
+                                            <span class="error-msg" ng-show="adduserform.lName.$dirty && adduserform.lName.$invalid">
+                                                <span ng-show="adduserform.lName.$error.required">Last Name required.</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group required">
+                                        <label for="title" class="col-sm-4 control-label">Email</label>
+                                        <div class="col-sm-8">
+                                            <input type="email" name="email" data-ng-model="user.uEmail" class="form-control" id="uEmail" placeholder="Your Email Address" required />
+                                            <span class="error-msg" ng-show="adduserform.email.$dirty && adduserform.email.$invalid">
+                                                <span ng-show="adduserform.email.$error.required">Email is required.</span>
+                                                <span ng-show="adduserform.email.$error.email">Invalid email address.</span>
+                                                </div>
+                                        </div>
+                                        <div class="form-group required">
+                                            <label for="title" class="col-sm-4 control-label">Contact No</label>
+                                            <div class="col-sm-8">
+                                                <input type="number" name="phone"  maxlength="10" data-ng-model="user.ContactNo" class="form-control" id="ContactNo" placeholder="Your Contact No" required/>
+                                                <span class="error-msg" ng-show="adduserform.phone.$error.required || adduserform.phone.$error.number">Valid phone number is required.</span>
+                                                <span class="error-msg"  ng-show="((adduserform.phone.$error.minlength ||adduserform.phone.$error.maxlength) && adduserform.phone.$dirty) ">phone number should be 10 digits</span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group required">
+                                            <label for="title" class="col-sm-4 control-label">Status</label>
+                                            <div class="col-sm-8 form-inline">
+                                                <div class="radio">
+                                                    <label><input type="radio" data-ng-model="user.uStatus" name="uStatus" value="Active" required>Active</label>
+                                                </div>
+                                                <div class="radio">
+                                                    <label><input type="radio" data-ng-model="user.uStatus"  name="uStatus" value="Inactive" required>Inactive</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <span data-ng-hide="editMode">
+                                                    <input type="submit" value="Add" ng-disabled="adduserform.$invalid" data-ng-click="add()" class="btn btn-success" />
+                                                </span>
+                                                <span data-ng-show="editMode">
+                                                    <input type="submit" value="Update" ng-disabled="adduserform.$invalid" data-ng-click="update()" class="btn btn-primary" />
+                                                </span>
+                                                <input type="button" value="Cancel" data-ng-click="cancel()" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                        </form> 
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 text-left"> <h4>Users List</h4></div>
+                    <div class="col-sm-6 text-right"> <p><a data-ng-click="showadd()" href="javascript:;" class="btn btn-primary">Add New User</a></p></div>
+                    <table class="table table-hover table-bordered">
+                        <tr class="success">
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Contact No</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+
+                        <tr data-ng-repeat="user in users">
+                            <td><p>{{user.fName}}</p></td>
+                            <td><p>{{user.lName}}</p></td>
+                            <td><p>{{user.uEmail}}</p></td>
+                            <td><p>{{user.ContactNo}}</p></td>
+                            <td><p>{{user.uStatus}}</p></td>
+                            <td class="text-center">
+                                <p>
+                                    <!--<a data-ng-click="get(user)" href="javascript:;">View</a> |-->
+                                    <a class="btn btn-primary" data-ng-click="edit(user)" href="javascript:;">Edit</a>
+                                    <a class="btn btn-danger" data-ng-click="showconfirm(user)" href="javascript:;">Delete</a>
+                                </p>
+
+                            </td>
+                        </tr>
+                    </table>
+                   
+                    <p><small>User list table with adding, edit and delet options.</small></p>
+                    <p><small>Tech used with Html, Css, Bootstrap, Angular Js.</small></p>
+                     <hr />
+                    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                                    <h4 class="modal-title" id="myModalLabel">Confirm Action</h4>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-success" data-ng-click="delete()">Ok</button>
+                                    <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </body>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <script src="js/main.js"></script>
+        </html>
